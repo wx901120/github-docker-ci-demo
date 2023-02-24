@@ -1,8 +1,14 @@
-name: ci
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
 on:
+  # 仅在推送到默认分支时运行。
   push:
-    branches:
-      - "main"
+    branches: ['main']
+
+  # 这个选项可以使你手动在 Action tab 页面触发工作流
+  workflow_dispatch:      
+
 # 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages。
 permissions:
   contents: read
@@ -13,34 +19,37 @@ permissions:
 concurrency:
   group: 'pages'
   cancel-in-progress: true
+
 jobs:
-  build:
+  # 单次部署的工作描述
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout # 1. clone代码
+      - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Node # 2. 设置node版本
+      - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
-      - name: Install dependencies and Build # 3.安装依赖并构建
-        run: |
-          npm install
-          npm run build
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: Upload artifact # 将静态文件作为项目上传
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload dist repository
           path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1 # 如果是推送操作(push)触发工作流，则需要它，如果是拉取请求触发工作流，则跳过这个
+        uses: actions/deploy-pages@v1
+
 
       # - name: Login to Docker Hub # 2.登录Docker Hub
       #   uses: docker/login-action@v2
