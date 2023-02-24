@@ -1,4 +1,4 @@
-#!/bin/bash
+# !/bin/bash
 # echo -e '----docker Login----'
 # docker login -u=$1 -p=$2
 echo -e "---------1.停止容器--------"
