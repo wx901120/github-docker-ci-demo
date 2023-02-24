@@ -61,4 +61,7 @@ jobs:
           host: ${{ secrets.CLOUD_IP }} #云服务器的ip
           username: ${{ secrets.CLOUD_NAME }} #云服务器的用户名:root
           password: ${{ secrets.CLOUD_PASSWORD }} #云服务器的密码
-          script: ls -la #运行脚本
+          script: | #运行脚本
+              cd ~ 
+              ls -al
+              sh ./scripts/deploy.sh 
