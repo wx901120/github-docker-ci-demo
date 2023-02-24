@@ -1,0 +1,57 @@
+name: ci
+on:
+  push:
+    branches:
+      - "main"
+# 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages。
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 允许一个并发的部署
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+jobs:
+  build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout # 1. clone代码
+        uses: actions/checkout@v3
+      - name: Set up Node # 2. 设置node版本
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install dependencies and Build # 3.安装依赖并构建
+        run: |
+          yarn install
+          yarn build
+      # - name: Setup Pages
+      #   uses: actions/configure-pages@v3
+      - name: Upload artifact # 将静态文件作为项目上传
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload dist repository
+          path: './dist'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1 # 如果是推送操作(push)触发工作流，则需要它，如果是拉取请求触发工作流，则跳过这个
+      - name: Login to Docker Hub # 2.登录Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }} # 前面声明的用户名
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # 前面声明的token作为密码
+      - name: Set up Docker Buildx # 3.创建Buildx的实例
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push # 4.构建和发布
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/vite:1.0.0
