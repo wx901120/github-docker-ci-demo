@@ -1,5 +1,5 @@
 
 FROM nginx
-RUN cd ./ && ls -al
+RUN cd ./dist && ls -al
 COPY ./dist /usr/share/nginx/html
 EXPOSE 80
