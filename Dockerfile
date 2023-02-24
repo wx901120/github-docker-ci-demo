@@ -1,5 +1,5 @@
 
 FROM nginx
-COPY . /app
-COPY ./app/dist /usr/share/nginx/html
+RUN ls -al
+COPY ./dist /usr/share/nginx/html
 EXPOSE 80
