@@ -9,5 +9,5 @@ docker rmi wx9527/vite:1.0.0
 echo -e '----3.重新拉取新的镜像----'
 docker pull wx9527/vite:1.0.0 # 从Docker Hub库里面下载镜像
 echo -e '---- 4. create container and run ----'
-docker run -dp 81:80 --name vite-container wx9527/vite:1.0.0
+docker run -dp 81:81 --name vite-container wx9527/vite:1.0.0
 echo -e '----deploy success ----'
